@@ -1,11 +1,17 @@
 import FloatingShape from "./components/FloatingShape";
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
 import ForgotPasswordPage from "./pages/ForgotPasswordPage";
 import DashboardPage from "./pages/DashboardPage";
 import SignUpPage from "./pages/SignUpPage";
 import LoginPage from "./pages/LoginPage";
 import EmailVerificationPage from "./pages/EmailVerificationPage";
 import ResetPasswordPage from "./pages/ResetPasswordPage";
+import { Toaster } from "react-hot-toast";
 function App() {
   return (
     <div
@@ -35,52 +41,21 @@ function App() {
       />
       <Router>
         <Routes>
-          <Route
-            path="/"
-            element={
-             
-                <DashboardPage />
-            
-            }
-          />
-          <Route
-            path="/signup"
-            element={
-
-                <SignUpPage />
-             
-            }
-          />
-          <Route
-            path="/login"
-            element={
-             
-                <LoginPage />
-             
-            }
-          />
+          <Route path="/" element={<DashboardPage />} />
+          <Route path="/signup" element={<SignUpPage />} />
+          <Route path="/login" element={<LoginPage />} />
           <Route path="/verify-email" element={<EmailVerificationPage />} />
-          <Route
-            path="/forgot-password"
-            element={
-              
-                <ForgotPasswordPage />
-             
-            }
-          />
+          <Route path="/forgot-password" element={<ForgotPasswordPage />} />
 
           <Route
             path="/reset-password/:token"
-            element={
-            
-                <ResetPasswordPage />
-             
-            }
+            element={<ResetPasswordPage />}
           />
           {/* catch all routes */}
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Router>
+      <Toaster />
     </div>
   );
 }
