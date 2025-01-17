@@ -15,7 +15,7 @@ import { Toaster } from "react-hot-toast";
 import { useAuthStore } from "./store/authStore";
 import { useEffect } from "react";
 import ProtectedRoute from "./ProtectedRoute/ProtectedRoute";
-import RedirectAuthenticatedUser from "./RedirectAuthenticatedUser/RedirectAuthenticateduser";
+import RedirectAuthenticatedUser from "./RedirectAuthenticatedUser/RedirectAuthenticatedUser";
 import LoadingSpinner from "./components/LoadingSpinner";
 
 function App() {
