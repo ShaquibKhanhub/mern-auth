@@ -97,21 +97,30 @@ export const useAuthStore = create((set) => ({
   checkAuth: async () => {
     set({ isCheckingAuth: true, error: null });
     try {
-      if (localStorage.getItem("user")) {
-        const user = JSON.parse(localStorage.getItem("user"));
+      // First, check if there is a user in localStorage
+      const storedUser = localStorage.getItem("user");
+
+      if (storedUser) {
+        const user = JSON.parse(storedUser);
+        // If user exists in localStorage, assume they're authenticated and set state
         set({
           user,
           isAuthenticated: true,
           isCheckingAuth: false,
         });
       } else {
-        set({ isCheckingAuth: false, isAuthenticated: false });
+        // If no user in localStorage, check server for authentication status
+        const response = await axios.get(`${API_URL}/check-auth`);
+        set({
+          user: response.data.user,
+          isAuthenticated: true,
+          isCheckingAuth: false,
+        });
       }
     } catch (error) {
       set({ error: null, isCheckingAuth: false, isAuthenticated: false });
     }
   },
-
   forgotPassword: async (email) => {
     set({ isLoading: true, error: null });
     try {
