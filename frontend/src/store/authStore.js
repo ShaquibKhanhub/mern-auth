@@ -6,8 +6,8 @@ const API_URL = "https://mern-auth-production-f4a9.up.railway.app/api/auth";
 axios.defaults.withCredentials = true;
 
 export const useAuthStore = create((set) => ({
-  user: null,
-  isAuthenticated: false,
+  user: JSON.parse(localStorage.getItem("user")) || null, // Get user from localStorage on initialization
+  isAuthenticated: !!localStorage.getItem("user"), // If user exists, set as authenticated
   error: null,
   isLoading: false,
   isCheckingAuth: true,
@@ -25,10 +25,10 @@ export const useAuthStore = create((set) => ({
         isAuthenticated: true,
         isLoading: false,
       });
-      console.log(res.data);
+      localStorage.setItem("user", JSON.stringify(response.data.user));
     } catch (error) {
       set({
-        error: error.response.data.message || "Error signin up",
+        error: error.response?.data?.message || "Error signing up",
         isLoading: false,
       });
       throw error;
@@ -48,6 +48,7 @@ export const useAuthStore = create((set) => ({
         error: null,
         isLoading: false,
       });
+      localStorage.setItem("user", JSON.stringify(response.data.user)); // Store user in localStorage
     } catch (error) {
       set({
         error: error.response?.data?.message || "Error logging in",
@@ -67,6 +68,7 @@ export const useAuthStore = create((set) => ({
         error: null,
         isLoading: false,
       });
+      localStorage.removeItem("user"); // Remove user from localStorage
     } catch (error) {
       set({ error: "Error logging out", isLoading: false });
       throw error;
@@ -85,7 +87,7 @@ export const useAuthStore = create((set) => ({
       return response.data;
     } catch (error) {
       set({
-        error: error.response.data.message || "Error verifying email",
+        error: error.response?.data?.message || "Error verifying email",
         isLoading: false,
       });
       throw error;
@@ -95,12 +97,16 @@ export const useAuthStore = create((set) => ({
   checkAuth: async () => {
     set({ isCheckingAuth: true, error: null });
     try {
-      const response = await axios.get(`${API_URL}/check-auth`);
-      set({
-        user: response.data.user,
-        isAuthenticated: true,
-        isCheckingAuth: false,
-      });
+      if (localStorage.getItem("user")) {
+        const user = JSON.parse(localStorage.getItem("user"));
+        set({
+          user,
+          isAuthenticated: true,
+          isCheckingAuth: false,
+        });
+      } else {
+        set({ isCheckingAuth: false, isAuthenticated: false });
+      }
     } catch (error) {
       set({ error: null, isCheckingAuth: false, isAuthenticated: false });
     }
@@ -117,7 +123,7 @@ export const useAuthStore = create((set) => ({
       set({
         isLoading: false,
         error:
-          error.response.data.message || "Error sending reset password email",
+          error.response?.data?.message || "Error sending reset password email",
       });
       throw error;
     }
@@ -133,7 +139,7 @@ export const useAuthStore = create((set) => ({
     } catch (error) {
       set({
         isLoading: false,
-        error: error.response.data.message || "Error resetting password",
+        error: error.response?.data?.message || "Error resetting password",
       });
       throw error;
     }
